@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MHBSIGNAL - Trading Signals</title>
+    <style>
+      :root {
+        --bg: #070b1b;
+        --bg2: #0b1026;
+        --panel: #121837;
+        --panel2: #141b3d;
+        --line: rgba(135, 149, 255, .14);
+        --text: #ffffff;
+        --muted: #a9afd0;
+        --gold: #f0be3d;
+        --gold2: #b98714;
+        --purple1: #5f5dff;
+        --purple2: #7c6cff;
+        --pink: #d954ff;
+        --red1: #ff3e5d;
+        --red2: #ff5c45;
+        --shadow: 0 18px 50px rgba(0, 0, 0, .35);
+        --radius: 22px;
+      }
+
+      * {
+        box-sizing: border-box
+      }
+
+      html,
+      body {
+        margin: 0;
+        padding: 0
+      }
+
+      body {
+        font-family: Inter, Arial, Helvetica, sans-serif;
+        color: var(--text);
+        background:
+          radial-gradient(circle at 50% 0%, rgba(63, 80, 255, .18), transparent 32%),
+          radial-gradient(circle at 50% 20%, rgba(255, 0, 140, .06), transparent 28%),
+          linear-gradient(180deg, #090d20 0%, #070b1b 45%, #090b19 100%);
+        min-height: 100vh;
+      }
+
+      body::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        background:
+          linear-gradient(rgba(255, 255, 255, .015) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(255, 255, 255, .015) 1px, transparent 1px);
+        background-size: 26px 26px;
+        pointer-events: none;
+        opacity: .45;
+      }
+
+      .page {
+        width: 100%;
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        padding: 18px 14px 30px;
+      }
+
+      .phone {
+        width: 100%;
+        max-width: 430px;
+        min-height: calc(100vh - 36px);
+        border-radius: 30px;
+        padding: 18px 14px 20px;
+        position: relative;
+        background:
+          radial-gradient(circle at 50% 12%, rgba(74, 88, 255, .24), transparent 28%),
+          radial-gradient(circle at 50% 0%, rgba(255, 0, 140, .05), transparent 20%),
+          linear-gradient(180deg, #0c1126 0%, #0a1023 42%, #0a0f20 100%);
+        box-shadow: 0 40px 90px rgba(0, 0, 0, .45), inset 0 0 0 1px rgba(255, 255, 255, .04);
+        overflow: hidden;
+      }
+
+      .phone::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background:
+          radial-gradient(circle at 50% 18%, rgba(99, 102, 241, .18), transparent 18%),
+          radial-gradient(circle at 50% 65%, rgba(18, 26, 61, .6), transparent 40%);
+        pointer-events: none;
+      }
+
+      .status {
+        position: relative;
+        z-index: 2;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 12px;
+        color: #eef1ff;
+        opacity: .9;
+        margin-bottom: 8px;
+        padding-inline: 4px;
+      }
+
+      .browserbar {
+        position: relative;
+        z-index: 2;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 18px;
+      }
+
+      .browser-icon {
+        color: #fff;
+        font-size: 18px;
+        opacity: .92;
+        line-height: 1;
+      }
+
+      .browser-title {
+        min-width: 0;
+        flex: 1;
+      }
+
+      .browser-title strong {
+        display: block;
+        font-size: 14px;
+        font-weight: 700;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .browser-title span {
+        display: block;
+        margin-top: 2px;
+        font-size: 11px;
+        color: #c4c9eb;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .top {
+        position: relative;
+        z-index: 2;
+        text-align: center;
+        padding: 6px 10px 0;
+      }
+
+      .logo {
+        width: 92px;
+        height: 92px;
+        object-fit: cover;
+        border-radius: 22px;
+        display: block;
+        margin: 0 auto 16px;
+        box-shadow: 0 14px 40px rgba(74, 88, 255, .25);
+      }
+
+      h1 {
+        margin: 0;
+        font-size: 23px;
+        font-weight: 900;
+        letter-spacing: .01em;
+        font-style: italic;
+      }
+
+      .subtitle {
+        margin-top: 8px;
+        color: #c4c9eb;
+        font-size: 14px;
+      }
+
+      .verified {
+        margin: 16px auto 22px;
+        width: max-content;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 16px;
+        border-radius: 999px;
+        color: #efc659;
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: .08em;
+        border: 1px solid rgba(240, 190, 61, .22);
+        background: rgba(19, 24, 55, .72);
+        box-shadow: 0 0 24px rgba(240, 190, 61, .08);
+      }
+
+      .shield {
+        width: 16px;
+        height: 16px;
+        display: inline-grid;
+        place-items: center;
+        border: 1px solid rgba(240, 190, 61, .4);
+        border-radius: 50%;
+        font-size: 10px;
+        line-height: 1;
+      }
+
+      .card {
+        position: relative;
+        z-index: 2;
+        background: linear-gradient(180deg, rgba(21, 28, 63, .94), rgba(15, 22, 53, .94));
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+      }
+
+      .main-card {
+        padding: 22px 16px 14px;
+        text-align: center;
+        margin-bottom: 12px;
+      }
+
+      .telegram-icon {
+        width: 46px;
+        height: 46px;
+        margin: 0 auto 14px;
+        border-radius: 50%;
+        display: grid;
+        place-items: center;
+        color: #9a91ff;
+        background: radial-gradient(circle at 50% 40%, rgba(120, 108, 255, .12), rgba(120, 108, 255, .05));
+        font-size: 24px;
+      }
+
+      .card h2 {
+        margin: 0;
+        font-size: 15px;
+        font-weight: 800;
+      }
+
+      .small {
+        margin: 8px auto 14px;
+        max-width: 260px;
+        color: var(--muted);
+        font-size: 12px;
+        line-height: 1.55;
+      }
+
+      .btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        width: 100%;
+        border: none;
+        cursor: pointer;
+        text-decoration: none;
+        font-weight: 800;
+        border-radius: 12px;
+        padding: 14px 16px;
+        font-size: 14px;
+        transition: transform .2s ease, filter .2s ease;
+      }
+
+      .btn:hover {
+        transform: translateY(-1px);
+        filter: brightness(1.03)
+      }
+
+      .btn-purple {
+        color: #fff;
+        background: linear-gradient(90deg, #5f5dff 0%, #7f6cff 100%);
+        box-shadow: 0 8px 24px rgba(99, 102, 241, .28);
+      }
+
+      .btn-gold {
+        color: #171717;
+        background: linear-gradient(90deg, #e0a90f 0%, #f0be3d 100%);
+        box-shadow: 0 8px 24px rgba(240, 190, 61, .18);
+      }
+
+      .btn-red {
+        color: #fff;
+        background: linear-gradient(90deg, #ff345d 0%, #ff5b48 100%);
+        box-shadow: 0 8px 24px rgba(255, 62, 93, .18);
+      }
+
+      .grid-2 {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+        margin-bottom: 12px;
+      }
+
+      .mini-card {
+        padding: 10px 10px 12px;
+        text-align: center;
+        text-decoration: none;
+        color: var(--text);
+      }
+
+      .mini-avatar {
+        width: 42px;
+        height: 42px;
+        border-radius: 50%;
+        object-fit: cover;
+        display: block;
+        margin: 0 auto 9px;
+        border: 1px solid rgba(255, 255, 255, .12);
+      }
+
+      .mini-card span {
+        display: block;
+        font-size: 11px;
+        font-weight: 700;
+        color: #dde2ff;
+        letter-spacing: .02em;
+      }
+
+      .section-card {
+        padding: 18px 14px 14px;
+        margin-bottom: 12px;
+        position: relative;
+        overflow: visible;
+      }
+
+      .section-card.gold-border {
+        border-color: rgba(240, 190, 61, .26);
+        box-shadow: 0 0 0 1px rgba(240, 190, 61, .05), var(--shadow);
+      }
+
+      .section-card.pink-border {
+        border-color: rgba(217, 84, 255, .18);
+        box-shadow: 0 0 0 1px rgba(217, 84, 255, .03), var(--shadow);
+      }
+
+      .recommend {
+        position: absolute;
+        top: -10px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: linear-gradient(90deg, #6d6cff 0%, #d954ff 100%);
+        color: #fff;
+        font-size: 9px;
+        font-weight: 800;
+        letter-spacing: .08em;
+        border-radius: 999px;
+        padding: 4px 10px;
+        box-shadow: 0 8px 18px rgba(217, 84, 255, .2);
+      }
+
+      .section-icon {
+        width: 42px;
+        height: 42px;
+        margin: 4px auto 12px;
+        display: grid;
+        place-items: center;
+        border-radius: 50%;
+        color: #f0be3d;
+        font-size: 24px;
+        background: radial-gradient(circle at 50% 40%, rgba(240, 190, 61, .12), rgba(240, 190, 61, .04));
+      }
+
+      .section-icon.red {
+        color: #ff4a63
+      }
+
+      .section-title {
+        text-align: center;
+        font-size: 15px;
+        font-weight: 800;
+        margin-bottom: 6px;
+      }
+
+      .section-text {
+        text-align: center;
+        color: var(--muted);
+        font-size: 12px;
+        line-height: 1.55;
+        margin-bottom: 14px;
+      }
+
+      footer {
+        position: relative;
+        z-index: 2;
+        text-align: center;
+        color: #6f769f;
+        font-size: 9px;
+        letter-spacing: .08em;
+        text-transform: uppercase;
+        margin-top: 14px;
+        padding-bottom: 2px;
+      }
+
+      footer .links {
+        margin-top: 6px;
+        display: flex;
+        gap: 18px;
+        justify-content: center;
+        font-size: 10px;
+      }
+
+      footer .links a {
+        color: #7f86b1;
+        text-decoration: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="page">
+      <div class="phone">
+        <div class="status">
+          <span></span>
+          <span></span>
+        </div>
+        <div class="browserbar">
+          <span class="browser-icon"></span>
+          <div class="browser-title">
+            <strong></strong>
+            <span></span>
+          </div>
+          <span class="browser-icon"></span>
+          <span class="browser-icon"></span>
+        </div>
+        <div class="top">
+          <img class="logo" src="channel.jpg" alt="Logo">
+          <h1>MHBSIGNAL</h1>
+          <div class="subtitle">Best Signals Provider</div>
+          <div class="verified">
+            <span class="shield">✓</span> Verified Channel
+          </div>
+        </div>
+        <section class="card main-card">
+          <div class="telegram-icon">✈</div>
+          <h2>Join Telegram Channel</h2>
+          <div class="small">Get daily accurate live stream signals, advance signals list &amp; market updates</div>
+          <a class="btn btn-purple" href="https://t.me/MHB_V1P" target="_blank">Join Telegram <span>→</span>
+          </a>
+        </section>
+        <div class="grid-2">
+          <a class="card mini-card" href="https://t.me/M_HB4" target="_blank">
+            <img class="mini-avatar" src="profile.jpg" alt="Profile">
+            <span>MAHAB</span>
+          </a>
+          <a class="card mini-card" href="https://t.me/MHB_SUPPORT" target="_blank">
+            <img class="mini-avatar" src="support.jpg" alt="Support">
+            <span>Mohammed Support</span>
+          </a>
+        </div>
+        <section class="card section-card gold-border">
+          <div class="recommend">RECOMMENDED</div>
+          <div class="section-icon">♕</div>
+          <div class="section-title">Premium Membership</div>
+          <div class="section-text">Free Join Details &amp; Requirements</div>
+          <a class="btn btn-gold" href="https://broker-qx.pro/sign-up/?lid=1120837" target="_blank">View Requirements <span>→</span>
+          </a>
+        </section>
+        <section class="card section-card pink-border">
+          <div class="section-icon red">▷</div>
+          <div class="section-title">YouTube Channel</div>
+          <div class="section-text">Learn master strategies &amp; live trading</div>
+          <a class="btn btn-red" href="https://t.me/MHB_V1P" target="_blank">Subscribe Now <span>→</span>
+          </a>
+        </section>
+        <footer>
+          <div>© 2026 MHB TRADING. ALL RIGHTS RESERVED.</div>
+          <div class="links">
+            <a href="#">PRIVACY</a>
+            <a href="#">TERMS</a>
+          </div>
+        </footer>
+      </div>
+    </div>
+  </body>
+</html>
